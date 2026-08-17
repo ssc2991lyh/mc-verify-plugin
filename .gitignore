@@ -1,21 +1,40 @@
-.gradle
-**/build/
-!**/src/**/build/
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Ignore Gradle GUI config
-gradle-app.setting
+# ===== 虚拟环境 =====
+.venv/
+venv/
+env/
+ENV/
 
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
+# ===== 运行时本地数据（插件生成，不入库） =====
+data/plugin_data/
+*.local
 
-# Avoid ignore Gradle wrappper properties
-!gradle-wrapper.properties
+# ===== IDE / 编辑器 =====
+.idea/
+.vscode/
+*.swp
 
-# Cache of project
-.gradletasknamecache
-
-# Eclipse Gradle plugin generated files
-# Eclipse Core
-.project
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
+# ===== OS =====
+.DS_Store
+Thumbs.db

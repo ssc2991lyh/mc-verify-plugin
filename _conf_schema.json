@@ -1,0 +1,32 @@
+{
+  "mc_host": {
+    "description": "AstrBotAdapter（MC 插件）所在主机，即 REST 地址",
+    "type": "string",
+    "hint": "若 MC 服与 AstrBot 同机填 127.0.0.1；否则填 MC 服 IP。本插件经它把「验证 XXXX」转发到 MC 服执行 /multilogin verify",
+    "default": "127.0.0.1"
+  },
+  "mc_rest_port": {
+    "description": "AstrBotAdapter 的 REST / WS 端口（共用）",
+    "type": "int",
+    "hint": "默认 8765；REST 与 WebSocket 共用此端口。与 MC 服 plugins/AstrbotAdapter/config.yml 的 server.port 一致",
+    "default": 8765
+  },
+  "astrbottoken": {
+    "description": "AstrBotAdapter 的通信 Token",
+    "type": "string",
+    "hint": "‼️ 在 MC 服 plugins/AstrbotAdapter/config.yml 中查看自动生成的 token，复制到此。留空则无法远程执行指令",
+    "default": ""
+  },
+  "group_id": {
+    "description": "监听“验证 XXXX”的 QQ 群号",
+    "type": "string",
+    "hint": "只在该群接收验证码；请填与 MC 服绑定的那个群。留空默认监听所有群",
+    "default": ""
+  },
+  "group_verify_listen": {
+    "description": "是否启用 QQ 群验证接码",
+    "type": "bool",
+    "hint": "false 则本插件完全不处理“验证 XXXX”消息",
+    "default": true
+  }
+}
