@@ -16,8 +16,8 @@ MCVerify 是一个**只做「进服验证码 + QQ 群放行」门禁**的 Bukkit
 它有两种接码通道（见下方「验证通道」），**不依赖任何外部 HTTP 验证服务**。
 
 > 如果你要的是「多账户正版登录兼容（LittleSkin / 自建皮肤站 + 正版同服）」，
-> 请去 [`mc-multilogin-compat`](https://github.com/ssc2991lyh/mc-multilogin-compat)（纯版）
-> 或 [`mc-multilogin-verify-plugin`](https://github.com/ssc2991lyh/mc-multilogin-verify-plugin)（联合版）。
+> 请去 [`mc-multilogin-compat`](https://github.com/ssc2991lyh/mc-multilogin-compat)
+> 或 [`mc-multilogin-verify-plugin`](https://github.com/ssc2991lyh/mc-multilogin-verify-plugin)（合并版）。
 
 ## 三种部署形态
 
@@ -35,7 +35,7 @@ MCVerify 是一个**只做「进服验证码 + QQ 群放行」门禁**的 Bukkit
 `verifyconfig.json` 里的 `verifychannel` 决定群消息怎么进来：
 
 - `astrbot`（默认）：mcverify（AstrBot 插件，由你另行按官方规范构建）收到群内
-  `验证 XXXX` 后，经 **AstrBotAdapter 的 `command/execute`** 在 MC 服执行
+  `验证 XXXX` 后，经 **`command/execute`** 在 MC 服执行
   `/mcverify verify <code>`，由本插件标记并回调 bot 提示成功。
   - 需要 `astrbottoken`（从 MC 服 `plugins/AstrbotAdapter/config.yml` 复制）。
 - `onebot`：本插件自带 HTTP 入站监听，OneBot 把群消息 webhook 直接推过来，
@@ -44,7 +44,7 @@ MCVerify 是一个**只做「进服验证码 + QQ 群放行」门禁**的 Bukkit
 - `both`：两种都收。
 
 MC 服（Linux）与 AstrBot（Windows）常不在同一台机器，因此验证状态 `verify.json`
-**只存在于 MC 服本地**（插件数据目录），不跨机共享——这正好是 `astrbot` 通道的设计意图。
+**只存在于 MC 服本地**（插件数据目录），不跨机共享——这正好是 `astrbot/Onebot` 通道的设计意图。
 
 ## 配置
 
@@ -64,7 +64,7 @@ MC 服（Linux）与 AstrBot（Windows）常不在同一台机器，因此验证
 | `code_ttl_seconds` | int | `600` | 验证码有效期（秒），过期需重进服获取新码。 |
 | `broadcast_group_id` | string | `""` | 群播报 / 接码所用的 QQ 群号，留空则广播到所有群。 |
 | `verifychannel` | string | `"astrbot"` | 验证通道：`onebot` / `astrbot` / `both`。 |
-| `astrbottoken` | string | `""` | AstrBotAdapter 通信 token（`astrbot`/`both` 通道用）。 |
+| `astrbottoken` | string | `""` | AstrBot 通信 token（`astrbot`/`both` 通道用）。 |
 | `onebot_http_url` | string | `http://127.0.0.1:3000` | OneBot HTTP 地址（`onebot`/`both` 通道用）。 |
 | `onebot_token` | string | `""` | OneBot token（`onebot`/`both` 通道用）。 |
 | `verify_webhook_port` | int | `8766` | OneBot 把群消息推到本插件的 HTTP 入站端口（`onebot`/`both` 通道用）。 |
