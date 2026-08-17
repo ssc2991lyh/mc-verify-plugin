@@ -16,9 +16,7 @@
 ⚠️ 本插件**不写任何 json、不轮询、不冻结**——所有状态都在 MC 服本地。
 （跨机无法共享文件，故只做「转发 + 收回调」。）
 
-> 与之配合的 MC 服门禁插件：`MCMultiLoginCompat`
-> （联合版 [`mc-multilogin-verify-plugin`](https://github.com/ssc2991lyh/mc-multilogin-verify-plugin)
-> 或纯版 `mc-multilogin-compat` 都可提供 `/multilogin verify` 入口）。
+> 与之配合的 MC 服门禁验证插件：联合版 [`mc-multilogin-verify-plugin`](https://github.com/ssc2991lyh/mc-multilogin-verify-plugin) 或纯版 [`mc-multilogin-compat`](https://github.com/ssc2991lyh/mc-multilogin-compat) 都可提供 `/multilogin verify` 入口。
 
 ## 前置依赖
 
