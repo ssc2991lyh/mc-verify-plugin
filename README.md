@@ -4,8 +4,7 @@
 
 ## 项目简介
 
-MCVerify 是一个**只做「进服验证码 + QQ 群放行」门禁**的 Bukkit 插件，
-与登录兼容（MultiLogin）完全解耦——它不接管 `hasJoinedServer`、不碰正版/皮肤站逻辑。
+MCVerify 是一个**「进服验证码 + QQ 群放行」门禁**的 Bukkit 插件。
 
 工作流程：
 
@@ -34,16 +33,16 @@ MCVerify 是一个**只做「进服验证码 + QQ 群放行」门禁**的 Bukkit
 
 `verifyconfig.json` 里的 `verifychannel` 决定群消息怎么进来：
 
-- `astrbot`（默认）：mcverify（AstrBot 插件，由你另行按官方规范构建）收到群内
+- `astrbot`（默认）： [`astrbot_plugin_mc_verify`](https://github.com/ssc2991lyh/astrbot_plugin_mc_verify)（AstrBot 插件，由你另行安装）收到群内
   `验证 XXXX` 后，经 **`command/execute`** 在 MC 服执行
   `/mcverify verify <code>`，由本插件标记并回调 bot 提示成功。
-  - 需要 `astrbottoken`（从 MC 服 `plugins/AstrbotAdapter/config.yml` 复制）。
+  - 需要 `astrbottoken`（从 MC 服 `plugins/mcverify/config.yml` 复制）。
 - `onebot`：本插件自带 HTTP 入站监听，OneBot 把群消息 webhook 直接推过来，
   标记后直接经 OneBot 回群。原理同astrbot模式相同。
   - 需要 `onebot_http_url` / `onebot_token` / `verify_webhook_port`。
 - `both`：两种都收。
 
-由于 MC 服务器与 AstrBot 常不在同一台机器，因此验证状态存储在MC 服务器插件目录下的 `verify.json`
+由于 MC 服务器与 AstrBot 常不在同一台机器，因此验证状态存储在 MC 服务器插件目录下的 `verify.json`
 **只存在于 MC 服本地**（插件数据目录），不跨机共享——这正好是 `AstrBot/Onebot` 通道的设计意图。
 
 ## 配置
