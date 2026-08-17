@@ -23,15 +23,12 @@ description: >-
 website: https://github.com/ssc2991lyh/mc-verify-plugin
 
 commands:
-  multilogin:
+  mcverify:
     description: 查看与管理 MCVerify 验证门禁。
-    usage: /multilogin <status|reload|verify>
-    aliases:
-      - mlogin
-      - mml
+    usage: /mcverify <status|reload|verify>
     permission: mcverify.admin
 
 permissions:
   mcverify.admin:
-    description: 允许使用 /multilogin 指令。
+    description: 允许使用 /mcverify 指令。
     default: op

@@ -17,14 +17,13 @@ import java.util.logging.Logger;
  * 多账户登录兼容（hasJoined 接管）的独立插件。它只负责：</p>
  * <ul>
  *   <li>玩家进服时查验证状态：已验证放行并问候，未验证生成验证码并踢出；</li>
- *   <li>提供 {@code /multilogin verify <code>} 指令（由 AstrBot 插件 mcverify
+ *   <li>提供 {@code /mcverify verify <code>} 指令（由 AstrBot 插件 mcverify
  *       经 AstrBotAdapter REST 转发调用，或 OneBot 直连由本插件 webhook 处理），按码标记已验证；</li>
  *   <li>OneBot 直连通道：自带 HTTP 入站监听接收群「验证 XXXX」，标记后经 OneBot 回群。</li>
  * </ul>
  *
  * <p>与联合版 {@code mc-multilogin-verify-plugin} 共享同一份 {@code verify.json} /
- * {@code verifyconfig.json} 约定，因此两个插件<b>二选一</b>安装即可，不要同时装
- * （{@code /multilogin} 指令会冲突）。</p>
+ * {@code verifyconfig.json} 约定，因此两个插件<b>二选一</b>安装即可，不要同时装。</p>
  */
 public class McVerifyPlugin extends JavaPlugin {
 
@@ -50,8 +49,8 @@ public class McVerifyPlugin extends JavaPlugin {
             verifyRegistered = true;
         }
 
-        if (getCommand("multilogin") != null) {
-            getCommand("multilogin").setExecutor(new McVerifyCommand(this));
+        if (getCommand("mcverify") != null) {
+            getCommand("mcverify").setExecutor(new McVerifyCommand(this));
         }
 
         getLogger().info("[MCVerify] 门禁已加载，开关：enabled=" + verifyConfig.enabled()

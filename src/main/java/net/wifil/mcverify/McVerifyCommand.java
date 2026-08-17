@@ -14,9 +14,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * {@code /multilogin <status|reload|verify>} 的实现（MCVerify 独立版）。
+ * {@code /mcverify <status|reload|verify>} 的实现（MCVerify 独立版）。
  *
- * <p>其中 {@code /multilogin verify <验证码>} 是 AstrBot 验证通道的 server 端入口：
+ * <p>其中 {@code /mcverify verify <验证码>} 是 AstrBot 验证通道的 server 端入口：
  * mcverify(AstrBot 插件) 收到 QQ 群「验证 XXXX」后，经 AstrBotAdapter REST
  * {@code command/execute} 以控制台身份执行本指令，由 MC 服在本地 verify.json 按码标记已验证。
  * 指令输出里的「验证成功」字样会被 mcverify 当作回调成功标志回群提示。</p>
@@ -63,11 +63,11 @@ public class McVerifyCommand implements CommandExecutor, TabCompleter {
     }
 
     /**
-     * 处理 {@code /multilogin verify <验证码>}。
+     * 处理 {@code /mcverify verify <验证码>}。
      */
     private void handleVerify(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            sender.sendMessage(ChatColor.RED + "用法: /multilogin verify <验证码>");
+            sender.sendMessage(ChatColor.RED + "用法: /mcverify verify <验证码>");
             return;
         }
         String code = args[1].trim().toUpperCase();

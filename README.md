@@ -36,7 +36,7 @@ MCVerify 是一个**只做「进服验证码 + QQ 群放行」门禁**的 Bukkit
 
 - `astrbot`（默认）：mcverify（AstrBot 插件，由你另行按官方规范构建）收到群内
   `验证 XXXX` 后，经 **AstrBotAdapter 的 `command/execute`** 在 MC 服执行
-  `/multilogin verify <code>`，由本插件标记并回调 bot 提示成功。
+  `/mcverify verify <code>`，由本插件标记并回调 bot 提示成功。
   - 需要 `astrbottoken`（从 MC 服 `plugins/AstrbotAdapter/config.yml` 复制）。
 - `onebot`：本插件自带 HTTP 入站监听，OneBot 把群消息 webhook 直接推过来，
   标记后直接经 OneBot 回群。
@@ -73,7 +73,7 @@ MC 服（Linux）与 AstrBot（Windows）常不在同一台机器，因此验证
 
 ## 指令
 
-`/multilogin <verify|status|reload>`（别名 `mlogin` / `mml`，权限 `mcverify.admin`，默认 OP）
+`/mcverify <verify|status|reload>`（权限 `mcverify.admin`，默认 OP）
 
 - `verify <code>`：按验证码标记某玩家已验证（通常由 AstrBot 插件 / OneBot 自动调用，也可手动）。
 - `status`：查看门禁状态、验证通道与已配置项。
