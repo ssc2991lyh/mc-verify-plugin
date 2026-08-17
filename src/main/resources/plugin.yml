@@ -1,0 +1,37 @@
+name: ${pluginName}
+version: ${version}
+main: ${mainClass}
+
+# api-version 故意填 1.13：
+# 它只表示「按 1.13+ 的新方块/材质语义解释插件数据」，并不是最低运行版本限制。
+# 填 1.13 可以让插件在 1.13 及之后的所有版本上都不触发旧数据兼容层；
+# 而在 1.8~1.12 的服务端上，这个字段会被直接忽略（老版本还没有它），
+# 因此同一个 JAR 仍然能正常加载 —— 这是「单 JAR 全版本兼容」的关键一环。
+api-version: ${apiVersion}
+
+# 门禁必须在第一个玩家可能连上来之前就装好，
+# 所以插件在服务器启动阶段（世界加载之前）就启用。
+load: STARTUP
+
+authors:
+  - wifi-left
+  - ssc2991lyh
+description: >-
+  MCVerify：独立的 QQ 群绑定验证门禁。玩家进服生成验证码并踢出，
+  在 QQ 群发送「验证 XXXX」后由本插件（OneBot 直连）或配合 AstrBot 插件 mcverify
+  （经 AStrBotAdapter 转发）按码标记已验证，下次进服即放行。
+website: https://github.com/ssc2991lyh/mc-verify-plugin
+
+commands:
+  multilogin:
+    description: 查看与管理 MCVerify 验证门禁。
+    usage: /multilogin <status|reload|verify>
+    aliases:
+      - mlogin
+      - mml
+    permission: mcverify.admin
+
+permissions:
+  mcverify.admin:
+    description: 允许使用 /multilogin 指令。
+    default: op
