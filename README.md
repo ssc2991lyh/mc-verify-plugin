@@ -39,12 +39,12 @@ MCVerify 是一个**只做「进服验证码 + QQ 群放行」门禁**的 Bukkit
   `/mcverify verify <code>`，由本插件标记并回调 bot 提示成功。
   - 需要 `astrbottoken`（从 MC 服 `plugins/AstrbotAdapter/config.yml` 复制）。
 - `onebot`：本插件自带 HTTP 入站监听，OneBot 把群消息 webhook 直接推过来，
-  标记后直接经 OneBot 回群。
+  标记后直接经 OneBot 回群。原理同astrbot模式相同。
   - 需要 `onebot_http_url` / `onebot_token` / `verify_webhook_port`。
 - `both`：两种都收。
 
-MC 服（Linux）与 AstrBot（Windows）常不在同一台机器，因此验证状态 `verify.json`
-**只存在于 MC 服本地**（插件数据目录），不跨机共享——这正好是 `astrbot/Onebot` 通道的设计意图。
+由于 MC 服务器与 AstrBot 常不在同一台机器，因此验证状态存储在MC 服务器插件目录下的 `verify.json`
+**只存在于 MC 服本地**（插件数据目录），不跨机共享——这正好是 `AstrBot/Onebot` 通道的设计意图。
 
 ## 配置
 
