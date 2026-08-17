@@ -31,14 +31,17 @@ MCVerify 是一个**「进服验证码 + QQ 群放行」门禁**的 Bukkit 插�
 
 ## 验证通道
 
-`verifyconfig.json` 里的 `verifychannel` 决定群消息怎么进来：
+`verifyconfig.json` 里的 `verifychannel` 决定群消息怎么进来。**两种通道同构**：
+本插件都是**服务器方**——自带 HTTP 入站监听（`verify_webhook_port`，默认 8766），
+客户端（OneBot 或 AstrBot 插件）把群消息 webhook 直推过来，本插件按码标记后回调：
 
-- `astrbot`（默认）： [`astrbot_plugin_mc_verify`](https://github.com/ssc2991lyh/astrbot_plugin_mc_verify)（AstrBot 插件，由你另行安装）收到群内
-  `验证 XXXX` 后，经 **`command/execute`** 在 MC 服执行
-  `/mcverify verify <code>`，由本插件标记并回调 bot 提示成功。
-  - 需要 `astrbottoken`（从 MC 服 `plugins/mcverify/config.yml` 复制）。
+- `astrbot`（默认）：[`astrbot_plugin_mc_verify`](https://github.com/ssc2991lyh/astrbot_plugin_mc_verify)
+  （AstrBot 插件，由你另行安装）收到群内 `验证 XXXX` 后，**直连 POST** 到本插件的 HTTP 入站
+  （与 OneBot 同构），本插件按码标记后返回回调 `{"ok":true/false}`，由 AstrBot 插件回群。
+  - 需要 `verify_webhook_port`（与 AstrBot 插件配置的 `mc_verify_port` 一致）。
+  - `astrbottoken` 为历史字段（旧版经 AstrBotAdapter 转发时代保留），直连模式下不再使用。
 - `onebot`：本插件自带 HTTP 入站监听，OneBot 把群消息 webhook 直接推过来，
-  标记后直接经 OneBot 回群。原理同astrbot模式相同。
+  标记后直接经 OneBot 回群。原理同 astrbot 模式相同。
   - 需要 `onebot_http_url` / `onebot_token` / `verify_webhook_port`。
 - `both`：两种都收。
 
@@ -63,10 +66,10 @@ MCVerify 是一个**「进服验证码 + QQ 群放行」门禁**的 Bukkit 插�
 | `code_ttl_seconds` | int | `600` | 验证码有效期（秒），过期需重进服获取新码。 |
 | `broadcast_group_id` | string | `""` | 群播报 / 接码所用的 QQ 群号，留空则广播到所有群。 |
 | `verifychannel` | string | `"astrbot"` | 验证通道：`onebot` / `astrbot` / `both`。 |
-| `astrbottoken` | string | `""` | AstrBot 通信 token（`astrbot`/`both` 通道用）。 |
+| `astrbottoken` | string | `""` | 历史字段（旧版经 AstrBotAdapter 转发时代保留），直连模式下不再使用。 |
 | `onebot_http_url` | string | `http://127.0.0.1:3000` | OneBot HTTP 地址（`onebot`/`both` 通道用）。 |
 | `onebot_token` | string | `""` | OneBot token（`onebot`/`both` 通道用）。 |
-| `verify_webhook_port` | int | `8766` | OneBot 把群消息推到本插件的 HTTP 入站端口（`onebot`/`both` 通道用）。 |
+| `verify_webhook_port` | int | `8766` | 本插件 HTTP 入站端口：OneBot / AstrBot 插件把群消息推到此（两通道共用）。 |
 
 > 文件里所有 `_comment` 开头的键都是说明，加载器会忽略，不影响逻辑。
 
@@ -74,7 +77,7 @@ MCVerify 是一个**「进服验证码 + QQ 群放行」门禁**的 Bukkit 插�
 
 `/mcverify <verify|status|reload>`（权限 `mcverify.admin`，默认 OP）
 
-- `verify <code>`：按验证码标记某玩家已验证（通常由 AstrBot 插件 / OneBot 自动调用，也可手动）。
+- `verify <code>`：手动按验证码标记某玩家已验证（调试 / 管理员手动操作；正常流程走 HTTP 直连 webhook 自动处理）。
 - `status`：查看门禁状态、验证通道与已配置项。
 - `reload`：热重载 `verifyconfig.json`（不影响已在线的验证逻辑）。
 

@@ -18,24 +18,27 @@ import java.util.logging.Logger;
  * <p>用户要求：mcverify 项目的<b>所有功能都细化为 true/false 开关</b>。本文件即承载这些开关；
  * 另有少量运行参数（验证码有效期、群广播所需的 QQ 群号、OneBot 地址、验证通道选择）。</p>
  *
- * <h2>跨机部署关键（v3 重构）</h2>
+ * <p>跨机部署关键（v3 重构）</p>
  * <p>MC 服（Linux）与 AstrBot（Windows）不在同一台机器、文件无法共享，因此：</p>
  * <ul>
  *   <li>验证状态 {@code verify.json} <b>只存在于 MC 服本地</b>（插件数据目录），不再跨机共享。</li>
  *   <li>QQ 群里的「验证 XXXX」由 bot 端转发给 MC 服处理，server 标记后回调 bot 提示成功。</li>
- *   <li>有两种转发通道，由 {@code verifychannel} 选择：
+ *   <li>有两种转发通道，由 {@code verifychannel} 选择，<b>两者同构</b>（本插件都是服务器方，
+ *     自带 HTTP 入站监听，客户端把群消息 webhook 直推过来，标记后回调）：
  *     <ul>
- *       <li>{@code onebot}：插件自带 HTTP 入站监听（OneBot 把群消息 webhook 推过来），标记后直接经 OneBot 回群。</li>
- *       <li>{@code astrbot}：mcverify(AstrBot 插件) 收到「验证 XXXX」后，经 AstrBotAdapter REST
- *         {@code command/execute} 执行 {@code /multilogin verify <code>}，由 MC 服标记并回调。</li>
+ *       <li>{@code onebot}：OneBot（NapCat / Lagrange）把群消息 webhook 推给本插件，
+ *         标记后直接经 {@code OneBotSender} 回群。</li>
+ *       <li>{@code astrbot}：AstrBot 插件（astrbot_plugin_mc_verify）把群消息直连 POST
+ *         给本插件（同 OneBot 格式），标记后返回 {@code {"ok":true/false}}，
+ *         由 AstrBot 插件根据回调响应回群。</li>
  *       <li>{@code both}：两种都接受。</li>
  *     </ul>
  *   </li>
  * </ul>
  *
- * <p>通道与配置项的依赖：{@code onebot}/{@code both} 需要 {@code onebot_http_url}/{@code onebot_token}
- * + 入站端口 {@code verify_webhook_port}；{@code astrbot}/{@code both} 需要 {@code astrbottoken}
- * （MC 服 plugins/AstrbotAdapter/config.yml 自动生成的 token）。两者互不读取对方那段配置。</p>
+ * <p>通道与配置项的依赖：两种通道都需要入站端口 {@code verify_webhook_port}；
+ * {@code onebot}/{@code both} 另需 {@code onebot_http_url}/{@code onebot_token}（回群用）。
+ * {@code astrbottoken} 为历史字段（旧版经 AstrBotAdapter 转发时代保留），直连模式下不再使用。</p>
  *
  * <p>首次运行 / 文件缺失时自动生成默认模板（plugins/MCVerify/verifyconfig.json）。</p>
  */
@@ -43,7 +46,7 @@ public final class VerifyConfig {
 
     /** 验证通道：OneBot 直连（插件自带 HTTP 入站）。 */
     public static final String CHANNEL_ONEBOT = "onebot";
-    /** 验证通道：AstrBot 插件经 AstrBotAdapter command/execute 转发。 */
+    /** 验证通道：AstrBot 插件直连 POST（与 onebot 同构，本插件作服务器方）。 */
     public static final String CHANNEL_ASTRBOT = "astrbot";
     /** 验证通道：两者都接受。 */
     public static final String CHANNEL_BOTH = "both";
@@ -62,8 +65,8 @@ public final class VerifyConfig {
             + "    \"in_game_quit_msg\": \"出服游戏内提示。\",\n"
             + "    \"code_ttl_seconds\": \"验证码有效期(秒)，过期需重进服获取新码。默认 600。\",\n"
             + "    \"broadcast_group_id\": \"群播报 / 接码所用的 QQ 群号，留空则广播到所有群。\",\n"
-            + "    \"verifychannel\": \"验证通道：onebot=OneBot 直连 / astrbot=经 AStrBotAdapter 转发 / both=两者都收。\",\n"
-            + "    \"astrbottoken\": \"AstrBotAdapter 通信 token（astrbot/both 通道用），从 MC 服 plugins/AstrbotAdapter/config.yml 复制。\",\n"
+            + "    \"verifychannel\": \"验证通道：onebot=OneBot 直连 / astrbot=AstrBot 插件直连(同构) / both=两者都收。本插件均为服务器方，自带 HTTP 入站监听，客户端把群消息 webhook 直推过来。\",\n"
+            + "    \"astrbottoken\": \"历史字段：旧版经 AstrBotAdapter 转发时代保留；直连模式下不再使用，留空即可。\",\n"
             + "    \"onebot_http_url\": \"OneBot HTTP 地址（onebot/both 通道用）。\",\n"
             + "    \"onebot_token\": \"OneBot token（onebot/both 通道用）。\",\n"
             + "    \"verify_webhook_port\": \"OneBot 把群消息推到本插件的 HTTP 入站端口（onebot/both 通道用）。\"\n"
@@ -203,7 +206,7 @@ public final class VerifyConfig {
         return c.equals(CHANNEL_ASTRBOT) || c.equals(CHANNEL_BOTH);
     }
 
-    /** AstrBotAdapter 的通信 token（留空则提示从 MC 服 plugins/AstrbotAdapter/config.yml 复制）。 */
+    /** 历史字段：旧版经 AstrBotAdapter 转发时代保留；直连模式下不再使用。 */
     public String astrbotToken() {
         return str("astrbottoken", "");
     }

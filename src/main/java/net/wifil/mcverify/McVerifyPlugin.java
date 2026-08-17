@@ -17,9 +17,10 @@ import java.util.logging.Logger;
  * 多账户登录兼容（hasJoined 接管）的独立插件。它只负责：</p>
  * <ul>
  *   <li>玩家进服时查验证状态：已验证放行并问候，未验证生成验证码并踢出；</li>
- *   <li>提供 {@code /mcverify verify <code>} 指令（由 AstrBot 插件 mcverify
- *       经 AstrBotAdapter REST 转发调用，或 OneBot 直连由本插件 webhook 处理），按码标记已验证；</li>
- *   <li>OneBot 直连通道：自带 HTTP 入站监听接收群「验证 XXXX」，标记后经 OneBot 回群。</li>
+ *   <li>提供 {@code /mcverify verify <code>} 指令（手动按码标记，或调试用），按码标记已验证；</li>
+ *   <li>入站直连通道（onebot / astrbot 同构）：自带 HTTP 入站监听接收群「验证 XXXX」，
+ *       按码标记后回调——OneBot 直连经 {@code OneBotSender} 回群，AstrBot 插件
+ *       （astrbot_plugin_mc_verify）直连则返回 {@code {"ok":true/false}} 由插件回群。</li>
  * </ul>
  *
  * <p>与联合版 {@code mc-multilogin-verify-plugin} 共享同一份 {@code verify.json} /
@@ -71,26 +72,35 @@ public class McVerifyPlugin extends JavaPlugin {
     /**
      * 初始化验证通道（onebot / astrbot / both）。
      * 热重载时先停掉旧入站监听，避免端口占用。
+     *
+     * <p>两种通道同构：本插件都是「服务器方」——自带 HTTP 入站监听
+     * （{@link VerifyCallbackServer}），客户端（OneBot 或 astrbot_plugin_mc_verify）
+     * 把群消息 webhook 直推过来，本插件按码标记后返回回调结果：
+     * <ul>
+     *   <li>onebot：标记后经 {@link OneBotSender} 直接回群；</li>
+     *   <li>astrbot：标记后返回 {@code {"ok":true/false}}，由 AstrBot 插件
+     *       （astrbot_plugin_mc_verify）根据回调响应回群。</li>
+     * </ul></p>
      */
     private void initVerifyChannel() {
         if (this.callbackServer != null) {
             this.callbackServer.stop();
             this.callbackServer = null;
         }
-        if (verifyConfig.useOnebot()) {
+        boolean useOnebot = verifyConfig.useOnebot();
+        boolean useAstrbot = verifyConfig.useAstrbot();
+
+        if (useOnebot) {
             this.onebot = new OneBotSender(verifyConfig.onebotHttpUrl(), verifyConfig.onebotToken(),
                     getLogger(), 10);
-            this.callbackServer = new VerifyCallbackServer(this);
-            this.callbackServer.start(verifyConfig.verifyWebhookPort());
         } else {
             this.onebot = null;
         }
-        if (verifyConfig.useAstrbot()) {
-            String t = verifyConfig.astrbotToken();
-            if (t == null || t.isEmpty()) {
-                getLogger().warning("[MCVerify] astrbot 通道已启用，但 astrbottoken 为空！"
-                        + " 请在 verifyconfig.json 填入 MC 服 plugins/AstrbotAdapter/config.yml 的自动生成 token。");
-            }
+
+        // onebot / astrbot / both 都启动入站监听（mcverify 作为服务器方接受连接）
+        if (useOnebot || useAstrbot) {
+            this.callbackServer = new VerifyCallbackServer(this);
+            this.callbackServer.start(verifyConfig.verifyWebhookPort());
         }
     }
 

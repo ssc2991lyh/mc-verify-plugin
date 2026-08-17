@@ -16,10 +16,10 @@ import java.util.List;
 /**
  * {@code /mcverify <status|reload|verify>} 的实现（MCVerify 独立版）。
  *
- * <p>其中 {@code /mcverify verify <验证码>} 是 AstrBot 验证通道的 server 端入口：
- * mcverify(AstrBot 插件) 收到 QQ 群「验证 XXXX」后，经 AstrBotAdapter REST
- * {@code command/execute} 以控制台身份执行本指令，由 MC 服在本地 verify.json 按码标记已验证。
- * 指令输出里的「验证成功」字样会被 mcverify 当作回调成功标志回群提示。</p>
+ * <p>其中 {@code /mcverify verify <验证码>} 是手动按码标记入口（调试 / 管理员手动操作用）。
+ * 正常流程下，QQ 群「验证 XXXX」由 OneBot（onebot 通道）或 AstrBot 插件
+ * （astrbot 通道，astrbot_plugin_mc_verify）经 HTTP 直连 webhook 推给
+ * {@link net.wifil.mcverify.verify.VerifyCallbackServer} 处理，本指令并非必经之路。</p>
  */
 public class McVerifyCommand implements CommandExecutor, TabCompleter {
 

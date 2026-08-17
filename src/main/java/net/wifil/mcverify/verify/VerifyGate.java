@@ -46,7 +46,7 @@ public final class VerifyGate implements Listener {
 
     /**
      * 只持有插件引用：config / state / onebot 每次事件都从插件取最新实例，
-     * 这样 {@code /multilogin reload} 重建配置后无需重新注册监听器即可生效。
+     * 这样 {@code /mcverify reload} 重建配置后无需重新注册监听器即可生效。
      */
     public VerifyGate(McVerifyPlugin plugin) {
         this.plugin = plugin;
