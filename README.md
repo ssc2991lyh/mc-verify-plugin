@@ -4,7 +4,7 @@
 
 ## 项目简介
 
-MCVerify 是一个**「进服验证码 + QQ 群放行」门禁**的 Bukkit 插件。
+MCVerify 是一个 **「进服验证码 + QQ 群放行」门禁** 的 Bukkit 插件。
 
 工作流程：
 
